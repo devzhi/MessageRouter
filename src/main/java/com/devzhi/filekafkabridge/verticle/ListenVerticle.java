@@ -2,6 +2,7 @@ package com.devzhi.filekafkabridge.verticle;
 
 import com.devzhi.filekafkabridge.service.CustomFileAlterationListener;
 import io.vertx.core.AbstractVerticle;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author devzhi
  * @date 2022/4/8
  */
+@Slf4j
 public class ListenVerticle extends AbstractVerticle {
     @Override
     public void start() throws Exception {
