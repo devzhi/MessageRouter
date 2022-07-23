@@ -39,7 +39,7 @@
     <appender-ref ref="FILE"/>
   </root>
 
-  <logger name="com.devzhi.messageroute" level="debug" additivity="false">
+  <logger name="com.devzhi.messagerouter" level="debug" additivity="false">
     <appender-ref ref="CONSOLE"/>
   </logger>
 

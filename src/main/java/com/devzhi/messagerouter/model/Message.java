@@ -1,4 +1,4 @@
-package com.devzhi.messageroute.model;
+package com.devzhi.messagerouter.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

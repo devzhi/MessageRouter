@@ -1,7 +1,7 @@
-package com.devzhi.messageroute.connection.handler;
+package com.devzhi.messagerouter.connection.handler;
 
 
-import com.devzhi.messageroute.model.Message;
+import com.devzhi.messagerouter.model.Message;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.Json;
 

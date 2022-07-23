@@ -1,4 +1,4 @@
-package com.devzhi.messageroute;
+package com.devzhi.messagerouter;
 
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;

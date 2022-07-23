@@ -1,4 +1,4 @@
-package com.devzhi.messageroute;
+package com.devzhi.messagerouter;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
