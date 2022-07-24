@@ -1,10 +1,12 @@
 package com.devzhi.messagerouter.connection.handler;
 
 
-import com.devzhi.messagerouter.model.Message;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.Json;
 import lombok.Data;
+
+import java.nio.ByteBuffer;
 
 /**
  * 连接服务接口
@@ -38,8 +40,8 @@ public abstract class ConnectHandler {
     /**
      * 处理接收到的消息
      */
-    public void onMessage(EventBus eventBus, Message message){
-        eventBus.publish("message."+this.name, Json.encode(message));
+    public void onMessage(EventBus eventBus, Buffer data){
+        eventBus.publish("message."+this.name, data);
     }
 
     /**
@@ -47,5 +49,5 @@ public abstract class ConnectHandler {
      * @param message 文本消息
      * @return 发送结果
      */
-    public abstract Boolean sendMessage(String message);
+    public abstract Boolean sendMessage(Buffer data);
 }

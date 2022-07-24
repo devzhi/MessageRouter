@@ -1,9 +1,9 @@
 package com.devzhi.messagerouter.route;
 
-import com.devzhi.messagerouter.model.Message;
 import com.devzhi.messagerouter.model.Route;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -52,9 +52,8 @@ public class RouteVerticle extends AbstractVerticle {
                 if (routes != null){
                     // 转发消息
                     for (Route route : routes) {
-                        log.debug(message.body().toString());
-                        Message msg = Json.decodeValue(message.body().toString(), Message.class);
-                        vertx.eventBus().publish("connect."+route.getTarget(),msg.getData());
+                        Buffer data = (Buffer) message.body();
+                        vertx.eventBus().publish("connect."+route.getTarget(),data);
                     }
                 }
             });
