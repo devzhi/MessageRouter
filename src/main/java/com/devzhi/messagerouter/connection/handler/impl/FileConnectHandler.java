@@ -67,6 +67,12 @@ public class FileConnectHandler extends ConnectHandler {
             log.info("[文件系统连接]开始监听目录：{}",this.path);
             monitor.start();
         });
+        // 监听对应地址并执行保存操作
+        this.getEventBus().consumer("connect."+ this.getName()).handler(message -> {
+            CompletableFuture.runAsync(() -> {
+                this.sendMessage(message.body().toString());
+            });
+        });
         return this;
     }
 
