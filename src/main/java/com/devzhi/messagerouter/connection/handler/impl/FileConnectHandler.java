@@ -4,9 +4,11 @@ import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.io.watch.WatchMonitor;
 import cn.hutool.core.io.watch.Watcher;
+import cn.hutool.core.io.watch.watchers.DelayWatcher;
 import cn.hutool.core.util.IdUtil;
 import com.devzhi.messagerouter.connection.handler.ConnectHandler;
 import com.devzhi.messagerouter.model.Message;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import lombok.Data;
 import lombok.Getter;
@@ -39,21 +41,22 @@ public class FileConnectHandler extends ConnectHandler {
     @Override
     public ConnectHandler connect() {
         // 监听创建事件
-        WatchMonitor monitor = WatchMonitor.create(this.path, WatchMonitor.ENTRY_CREATE);
+        WatchMonitor monitor = WatchMonitor.create(this.path, WatchMonitor.ENTRY_MODIFY);
         // 配置监听转发
         ConnectHandler that = this;
         CompletableFuture.runAsync(() -> {
-            monitor.setWatcher(new Watcher() {
+            monitor.setWatcher(new DelayWatcher(new Watcher() {
                 @Override
                 public void onCreate(WatchEvent<?> watchEvent, Path path) {
-                    // 监听到新文件后以UTF8编码的形式读取数据并调用onMessage事件
-                    String filePath = path + "/" +watchEvent.context();
-                    log.info("[文件系统连接]发现文件 {}",filePath);
-                    that.onMessage(that.getEventBus(),new Message(that.getName(),FileUtil.readUtf8String(filePath)));
                 }
 
                 @Override
                 public void onModify(WatchEvent<?> watchEvent, Path path) {
+                    // 监听到新文件后以UTF8编码的形式读取数据并调用onMessage事件
+                    String filePath = path + "/" +watchEvent.context();
+                    log.info("[文件系统连接]发现文件 {}",filePath);
+                    that.onMessage(that.getEventBus(),new Message(that.getName(),
+                        Buffer.buffer().appendBytes(FileUtil.readBytes(filePath))));
                 }
 
                 @Override
@@ -63,7 +66,7 @@ public class FileConnectHandler extends ConnectHandler {
                 @Override
                 public void onOverflow(WatchEvent<?> watchEvent, Path path) {
                 }
-            });
+            },500));
             log.info("[文件系统连接]开始监听目录：{}",this.path);
             monitor.start();
         });
