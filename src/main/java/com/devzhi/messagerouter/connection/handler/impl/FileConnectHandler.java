@@ -82,7 +82,7 @@ public class FileConnectHandler extends ConnectHandler {
     @Override
     public Boolean sendMessage(String message) {
         // 利用雪花算法创建一个唯一的TXT文件
-        File file = new File(path + "/" + IdUtil.getSnowflakeNextIdStr() + ".txt");
+        File file = new File(path + "/" + IdUtil.getSnowflakeNextIdStr() + ".mrd");
         try {
             // 写入数据
             FileUtil.writeString(message,file, StandardCharsets.UTF_8);
