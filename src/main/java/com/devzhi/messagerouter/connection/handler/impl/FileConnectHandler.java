@@ -51,10 +51,9 @@ public class FileConnectHandler extends ConnectHandler {
                 @Override
                 public void onModify(WatchEvent<?> watchEvent, Path path) {
                     // 监听到新文件后以UTF8编码的形式读取数据并调用onMessage事件
-                    String filePath = path + "/" +watchEvent.context();
-                    log.info("[文件系统连接]发现文件 {}",filePath);
-                    that.onMessage(that.getEventBus(),
-                        Buffer.buffer().appendBytes(FileUtil.readBytes(filePath)));
+                    String filePath = path + "/" + watchEvent.context();
+                    log.info("[文件系统连接]发现文件 {}", filePath);
+                    that.onMessage(Buffer.buffer().appendBytes(FileUtil.readBytes(filePath)));
                 }
 
                 @Override
@@ -64,12 +63,12 @@ public class FileConnectHandler extends ConnectHandler {
                 @Override
                 public void onOverflow(WatchEvent<?> watchEvent, Path path) {
                 }
-            },500));
-            log.info("[文件系统连接]开始监听目录：{}",this.path);
+            }, 500));
+            log.info("[文件系统连接]开始监听目录：{}", this.path);
             monitor.start();
         });
         // 监听对应地址并执行保存操作
-        this.getEventBus().consumer("connect."+ this.getName()).handler(message -> {
+        this.getEventBus().consumer("connect." + this.getName()).handler(message -> {
             CompletableFuture.runAsync(() -> {
                 this.sendMessage((Buffer) message.body());
             });
@@ -83,11 +82,11 @@ public class FileConnectHandler extends ConnectHandler {
         File file = new File(path + "/" + IdUtil.getSnowflakeNextIdStr() + ".mrd");
         try {
             // 写入数据
-            FileUtil.writeBytes(data.getBytes(),file);
-            log.info("[文件系统连接]写入成功 {}",file.getPath());
-        }catch (IORuntimeException e){
+            FileUtil.writeBytes(data.getBytes(), file);
+            log.info("[文件系统连接]写入成功 {}", file.getPath());
+        } catch (IORuntimeException e) {
             // 简单打印出错误信息
-            log.warn("[文件系统连接]写入失败 {}",e.getCause().toString());
+            log.warn("[文件系统连接]写入失败 {}", e.getCause().toString());
             return false;
         }
         return true;

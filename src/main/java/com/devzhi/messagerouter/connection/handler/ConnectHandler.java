@@ -1,6 +1,7 @@
 package com.devzhi.messagerouter.connection.handler;
 
 
+import com.google.inject.Inject;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.Json;
@@ -29,6 +30,7 @@ public abstract class ConnectHandler {
     /**
      * 消息总线
      */
+    @Inject
     private EventBus eventBus;
 
     /**
@@ -40,13 +42,13 @@ public abstract class ConnectHandler {
     /**
      * 处理接收到的消息
      */
-    public void onMessage(EventBus eventBus, Buffer data){
+    public void onMessage(Buffer data){
         eventBus.publish("message."+this.name, data);
     }
 
     /**
      * 发送消息
-     * @param message 文本消息
+     * @param data 消息数据
      * @return 发送结果
      */
     public abstract Boolean sendMessage(Buffer data);
