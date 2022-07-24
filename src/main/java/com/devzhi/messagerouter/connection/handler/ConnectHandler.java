@@ -39,7 +39,7 @@ public abstract class ConnectHandler {
      * 处理接收到的消息
      */
     public void onMessage(EventBus eventBus, Message message){
-        eventBus.publish("message", Json.encode(message));
+        eventBus.publish("message."+this.name, Json.encode(message));
     }
 
     /**
