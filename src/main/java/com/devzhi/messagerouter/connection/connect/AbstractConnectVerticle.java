@@ -37,7 +37,7 @@ public abstract class AbstractConnectVerticle extends AbstractVerticle {
      * @param data 消息数据
      * @return 发送结果
      */
-    public abstract Boolean sendMessage(Buffer data);
+    public abstract Boolean sendMessage(String channelAddress,Buffer data);
 
     @Override
     public void start(Promise<Void> startPromise) {
