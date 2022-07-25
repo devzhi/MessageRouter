@@ -17,7 +17,7 @@ import java.nio.file.WatchEvent;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 文件系统处理器
+ * File处理器
  *
  * @author devzhi
  * @date 2022/7/25
@@ -51,7 +51,7 @@ public class FileConnectVerticle extends AbstractConnectVerticle {
                 public void onModify(WatchEvent<?> watchEvent, Path path) {
                     // 监听到新文件后以UTF8编码的形式读取数据并调用onMessage事件
                     String filePath = path + "/" + watchEvent.context();
-                    log.info("[文件系统连接]发现文件 {}", filePath);
+                    log.info("[File]发现文件 {}", filePath);
                     that.onMessage(null, Buffer.buffer().appendBytes(FileUtil.readBytes(filePath)));
                 }
 
@@ -63,29 +63,39 @@ public class FileConnectVerticle extends AbstractConnectVerticle {
                 public void onOverflow(WatchEvent<?> watchEvent, Path path) {
                 }
             }, 500));
-            log.info("[文件系统连接]开始监听目录：{}", this.getConnectConfig().getConfig().get("path"));
+            log.info("[File]开始监听目录：{}", this.getConnectConfig().getConfig().get("path"));
             monitor.start();
         });
         // 监听对应地址并执行保存操作
         getVertx().eventBus().consumer("connect." + this.getConnectConfig().getName()).handler(message -> {
             CompletableFuture.runAsync(() -> {
-                this.sendMessage((Buffer) message.body());
+                // TODO 文件加入channelAddress
+                this.sendMessage(null,(Buffer) message.body());
             });
         });
         return this;
     }
 
     @Override
-    public Boolean sendMessage(Buffer data) {
+    public Boolean sendMessage(String channelAddress,Buffer data) {
+        // 构造filename
+        StringBuilder filename = new StringBuilder();
+        // 基本路径
+        filename.append(this.getConnectConfig().getConfig().get("path")).append("/");
+        // 若有通道则写入通道
+        if (channelAddress != null){
+            filename.append(channelAddress).append(".");
+        }
         // 利用雪花算法创建一个唯一的TXT文件
-        File file = new File(this.getConnectConfig().getConfig().get("path") + "/" + IdUtil.getSnowflakeNextIdStr() + ".mrd");
+        filename.append(IdUtil.getSnowflakeNextIdStr()).append(".mrd");
+        File file = new File(filename.toString());
         try {
             // 写入数据
             FileUtil.writeBytes(data.getBytes(), file);
-            log.info("[文件系统连接]写入成功 {}", file.getPath());
+            log.info("[File]写入成功 {}", file.getPath());
         } catch (IORuntimeException e) {
             // 简单打印出错误信息
-            log.warn("[文件系统连接]写入失败 {}", e.getCause().toString());
+            log.warn("[File]写入失败 {}", e.getCause().toString());
             return false;
         }
         return true;
