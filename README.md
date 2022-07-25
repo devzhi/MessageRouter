@@ -111,5 +111,4 @@ Message Router旨在打造一个适配所有主流消息组件的消息分发中
 
 ## Licence
 
-MessageRouter is licensed under the [Apache License 2.0]: https://github.com/devzhi/MessageRouter/blob/main/LICENSE
-
+MessageRouter is licensed under the  [Apache License 2.0](https://github.com/devzhi/MessageRouter/blob/main/LICENSE)
