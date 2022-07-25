@@ -34,7 +34,7 @@ public class ConnectVerticle extends AbstractVerticle {
                 .mapTo(ConnectionType.valueOf(jsonObject.getString("type"))
                     .getConnectHandler());
             // 异步执行连接
-            CompletableFuture.runAsync(connectHandler::register);
+            CompletableFuture.runAsync(()->connectHandler.register(getVertx().eventBus()));
         }
     }
 }

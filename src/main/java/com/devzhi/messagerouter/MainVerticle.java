@@ -2,14 +2,10 @@ package com.devzhi.messagerouter;
 
 import com.devzhi.messagerouter.connection.ConnectVerticle;
 import com.devzhi.messagerouter.route.RouteVerticle;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
 import io.vertx.config.ConfigRetriever;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Promise;
-import io.vertx.core.eventbus.EventBus;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,14 +27,5 @@ public class MainVerticle extends AbstractVerticle {
                 log.error("[模块部署]路由模块部署失败:(\n{}",hander.getCause().toString());
             });;
         });
-    }
-
-    /**
-     * 注册EventBus
-     * @return EventBus
-     */
-    @Provides
-    public EventBus getEventBus(){
-        return vertx.eventBus();
     }
 }

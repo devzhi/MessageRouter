@@ -1,10 +1,8 @@
 package com.devzhi.messagerouter.connection.handler;
 
 
-import com.google.inject.Inject;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.json.Json;
 import lombok.Data;
 
 import java.nio.ByteBuffer;
@@ -30,7 +28,6 @@ public abstract class ConnectHandler {
     /**
      * 消息总线
      */
-    @Inject
     private EventBus eventBus;
 
     /**
@@ -48,7 +45,8 @@ public abstract class ConnectHandler {
     /**
      * 注册方法，注册后会自动启动handler
      */
-    public void register(){
+    public void register(EventBus eventBus){
+        this.eventBus = eventBus;
         this.connect().listen();
     }
 
