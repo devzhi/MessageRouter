@@ -35,11 +35,21 @@ public class FileConnectHandler extends ConnectHandler {
      */
     private String path;
 
+    /**
+     * 路径监听器
+     */
+    private WatchMonitor monitor;
+
 
     @Override
     public ConnectHandler connect() {
         // 监听创建事件
-        WatchMonitor monitor = WatchMonitor.create(this.path, WatchMonitor.ENTRY_MODIFY);
+        monitor = WatchMonitor.create(this.path, WatchMonitor.ENTRY_MODIFY);
+        return this;
+    }
+
+    @Override
+    public ConnectHandler listen() {
         // 配置监听转发
         ConnectHandler that = this;
         CompletableFuture.runAsync(() -> {
@@ -53,7 +63,7 @@ public class FileConnectHandler extends ConnectHandler {
                     // 监听到新文件后以UTF8编码的形式读取数据并调用onMessage事件
                     String filePath = path + "/" + watchEvent.context();
                     log.info("[文件系统连接]发现文件 {}", filePath);
-                    that.onMessage(Buffer.buffer().appendBytes(FileUtil.readBytes(filePath)));
+                    that.onMessage(null,Buffer.buffer().appendBytes(FileUtil.readBytes(filePath)));
                 }
 
                 @Override

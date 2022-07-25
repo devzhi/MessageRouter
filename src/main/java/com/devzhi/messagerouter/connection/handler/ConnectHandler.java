@@ -40,10 +40,28 @@ public abstract class ConnectHandler {
     public abstract ConnectHandler connect();
 
     /**
+     * 监听
+     * @return this
+     */
+    public abstract ConnectHandler listen();
+
+    /**
+     * 注册方法，注册后会自动启动handler
+     */
+    public void register(){
+        this.connect().listen();
+    }
+
+    /**
      * 处理接收到的消息
      */
-    public void onMessage(Buffer data){
-        eventBus.publish("message."+this.name, data);
+    public void onMessage(String channelAddress,Buffer data){
+        StringBuilder addressBuilder = new StringBuilder();
+        addressBuilder.append("message.").append(this.getName());
+        if (channelAddress != null){
+            addressBuilder.append(".").append(channelAddress);
+        }
+        eventBus.publish(addressBuilder.toString(), data);
     }
 
     /**

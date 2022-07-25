@@ -33,10 +33,8 @@ public class ConnectVerticle extends AbstractVerticle {
             ConnectHandler connectHandler = jsonObject
                 .mapTo(ConnectionType.valueOf(jsonObject.getString("type"))
                     .getConnectHandler());
-            // 注入事件总线
-            connectHandler.setEventBus(vertx.eventBus());
             // 异步执行连接
-            CompletableFuture.runAsync(connectHandler::connect);
+            CompletableFuture.runAsync(connectHandler::register);
         }
     }
 }
