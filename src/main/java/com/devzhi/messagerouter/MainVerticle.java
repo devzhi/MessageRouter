@@ -23,8 +23,8 @@ public class MainVerticle extends AbstractVerticle {
         retriever.getConfig(json -> {
             vertx.deployVerticle(new ConnectVerticle(),
                 new DeploymentOptions().setConfig(json.result().getJsonObject("connect")))
-                .onFailure(hander -> {
-                log.error("[模块部署]连接模块部署失败:({}",hander.getCause().toString());
+                .onFailure(handler -> {
+                log.error("[模块部署]连接模块部署失败:({}",handler.getCause().toString());
                 });
             vertx.deployVerticle(new RouteVerticle(),
                 new DeploymentOptions().setConfig(json.result().getJsonObject("route"))).onFailure(hander -> {
