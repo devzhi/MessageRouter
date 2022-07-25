@@ -1,4 +1,4 @@
-package com.devzhi.messagerouter.connection.handler.impl;
+package com.devzhi.messagerouter.connection.connect.impl;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IORuntimeException;
@@ -6,52 +6,41 @@ import cn.hutool.core.io.watch.WatchMonitor;
 import cn.hutool.core.io.watch.Watcher;
 import cn.hutool.core.io.watch.watchers.DelayWatcher;
 import cn.hutool.core.util.IdUtil;
-import com.devzhi.messagerouter.connection.handler.ConnectHandler;
+import com.devzhi.messagerouter.connection.connect.AbstractConnectVerticle;
+import com.devzhi.messagerouter.model.ConnectConfig;
 import io.vertx.core.buffer.Buffer;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.util.concurrent.CompletableFuture;
 
-
 /**
- * 文件连接处理器
+ * 文件系统处理器
  *
  * @author devzhi
+ * @date 2022/7/25
  */
 @Slf4j
-@Getter
-@Setter
-public class FileConnectHandler extends ConnectHandler {
-
-    /**
-     * 操作路径
-     */
-    private String path;
+public class FileConnectVerticle extends AbstractConnectVerticle {
 
     /**
      * 路径监听器
      */
     private WatchMonitor monitor;
 
-
     @Override
-    public ConnectHandler connect() {
+    public AbstractConnectVerticle connect() {
         // 监听创建事件
-        monitor = WatchMonitor.create(this.path, WatchMonitor.ENTRY_MODIFY);
+        monitor = WatchMonitor.create((String) this.getConnectConfig().getConfig().get("path"), WatchMonitor.ENTRY_MODIFY);
         return this;
     }
 
     @Override
-    public ConnectHandler listen() {
+    public AbstractConnectVerticle listen() {
         // 配置监听转发
-        ConnectHandler that = this;
+        AbstractConnectVerticle that = this;
         CompletableFuture.runAsync(() -> {
             monitor.setWatcher(new DelayWatcher(new Watcher() {
                 @Override
@@ -63,7 +52,7 @@ public class FileConnectHandler extends ConnectHandler {
                     // 监听到新文件后以UTF8编码的形式读取数据并调用onMessage事件
                     String filePath = path + "/" + watchEvent.context();
                     log.info("[文件系统连接]发现文件 {}", filePath);
-                    that.onMessage(null,Buffer.buffer().appendBytes(FileUtil.readBytes(filePath)));
+                    that.onMessage(null, Buffer.buffer().appendBytes(FileUtil.readBytes(filePath)));
                 }
 
                 @Override
@@ -74,11 +63,11 @@ public class FileConnectHandler extends ConnectHandler {
                 public void onOverflow(WatchEvent<?> watchEvent, Path path) {
                 }
             }, 500));
-            log.info("[文件系统连接]开始监听目录：{}", this.path);
+            log.info("[文件系统连接]开始监听目录：{}", this.getConnectConfig().getConfig().get("path"));
             monitor.start();
         });
         // 监听对应地址并执行保存操作
-        this.getEventBus().consumer("connect." + this.getName()).handler(message -> {
+        getVertx().eventBus().consumer("connect." + this.getConnectConfig().getName()).handler(message -> {
             CompletableFuture.runAsync(() -> {
                 this.sendMessage((Buffer) message.body());
             });
@@ -89,7 +78,7 @@ public class FileConnectHandler extends ConnectHandler {
     @Override
     public Boolean sendMessage(Buffer data) {
         // 利用雪花算法创建一个唯一的TXT文件
-        File file = new File(path + "/" + IdUtil.getSnowflakeNextIdStr() + ".mrd");
+        File file = new File(this.getConnectConfig().getConfig().get("path") + "/" + IdUtil.getSnowflakeNextIdStr() + ".mrd");
         try {
             // 写入数据
             FileUtil.writeBytes(data.getBytes(), file);

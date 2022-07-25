@@ -1,13 +1,17 @@
 {
-    "connect": {
-        "connection": [{
+    "connection": {
+        "connect": [{
             "name": "f1",
             "type": "File",
-            "path": "D:/temp/test/f1"
+            "config": {
+                "path": "D:/temp/test/f1"
+            }
         },{
             "name": "f2",
             "type": "File",
-            "path": "D:/temp/test/f2"
+            "config": {
+                "path": "D:/temp/test/f2"
+            }
         }]
     },
     "route": {

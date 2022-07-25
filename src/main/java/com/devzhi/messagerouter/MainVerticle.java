@@ -1,6 +1,6 @@
 package com.devzhi.messagerouter;
 
-import com.devzhi.messagerouter.connection.ConnectVerticle;
+import com.devzhi.messagerouter.connection.ConnectManagerVerticle;
 import com.devzhi.messagerouter.route.RouteVerticle;
 import io.vertx.config.ConfigRetriever;
 import io.vertx.core.AbstractVerticle;
@@ -17,8 +17,8 @@ public class MainVerticle extends AbstractVerticle {
         ConfigRetriever retriever = ConfigRetriever.create(vertx);
         // 部署Verticle
         retriever.getConfig(json -> {
-            vertx.deployVerticle(new ConnectVerticle(),
-                new DeploymentOptions().setConfig(json.result().getJsonObject("connect")))
+            vertx.deployVerticle(new ConnectManagerVerticle(),
+                new DeploymentOptions().setConfig(json.result().getJsonObject("connection")))
                 .onFailure(handler -> {
                 log.error("[模块部署]连接模块部署失败:({}",handler.getCause().toString());
                 });
