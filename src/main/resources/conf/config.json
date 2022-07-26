@@ -1,36 +1,47 @@
 {
     "connection": {
-        "connect": [{
-            "name": "f1",
-            "type": "File",
-            "config": {
-                "path": "D:/temp/test/f1"
+        "connect": [
+            {
+                "name": "f1",
+                "type": "File",
+                "config": {
+                    "path": "D:/temp/test/f1"
+                }
+            },
+            {
+                "name": "f2",
+                "type": "File",
+                "config": {
+                    "path": "D:/temp/test/f2"
+                }
+            },
+            {
+                "name": "k1",
+                "type": "Kafka",
+                "config": {
+                    "bootstrap.servers": "localhost:9092",
+                    "topics": [
+                        "test1"
+                    ],
+                    "producer": {
+                        "acks": "1"
+                    },
+                    "consumer": {
+                        "group.id": "my_group",
+                        "auto.offset.reset": "earliest",
+                        "enable.auto.commit": "false"
+                    }
+                }
             }
-        },{
-            "name": "f2",
-            "type": "File",
-            "config": {
-                "path": "D:/temp/test/f2"
-            }
-        },{
-            "name": "k1",
-            "type": "Kafka",
-            "config": {
-                "bootstrap.servers": "localhost:9092",
-                "group.id": "my_group",
-                "auto.offset.reset": "earliest",
-                "enable.auto.commit": "false",
-                "acks": "1",
-                "topics": ["test1"]
-            }
-        }]
+        ]
     },
     "route": {
         "routes": [
             {
                 "source": "k1.test1",
                 "target": "f1"
-            },{
+            },
+            {
                 "source": "f2",
                 "target": "k1.test1"
             }

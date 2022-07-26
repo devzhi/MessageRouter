@@ -30,16 +30,14 @@ public class KafkaConnectVerticle extends AbstractConnectVerticle {
         consumerConfig.put("bootstrap.servers", (String) getConnectConfig().getConfig().get("bootstrap.servers"));
         consumerConfig.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         consumerConfig.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        consumerConfig.put("group.id", (String) getConnectConfig().getConfig().get("group.id"));
-        consumerConfig.put("auto.offset.reset", (String) getConnectConfig().getConfig().get("auto.offset.reset"));
-        consumerConfig.put("enable.auto.commit", (String) getConnectConfig().getConfig().get("enable.auto.commit"));
+        consumerConfig.putAll((Map<String, String>) this.getConnectConfig().getConfig().get("consumer"));
 
         // 创建生产者
         Map<String, String> producerConfig = new HashMap<>();
         producerConfig.put("bootstrap.servers", (String) getConnectConfig().getConfig().get("bootstrap.servers"));
         producerConfig.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         producerConfig.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        producerConfig.put("acks", (String) getConnectConfig().getConfig().get("acks"));
+        producerConfig.putAll((Map<String, String>) this.getConnectConfig().getConfig().get("producer"));
         // 使用消费者和 Apache Kafka 交互
         this.consumer = KafkaConsumer.create(vertx, consumerConfig);
         // 使用生产者和 Apache Kafka 交互
