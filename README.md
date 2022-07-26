@@ -8,7 +8,7 @@
   </p>
   <p>
     <b>
-      轻量级消息路由中间件
+      高性能消息路由中间件
     </b>
   </p>
   <p>
@@ -20,7 +20,7 @@
 
 ## 愿景
 
-Message Router旨在打造一个适配所有主流消息组件的消息分发中间件
+Message Router旨在打造一个适配所有主流消息组件的消息路由中间件
 
 ## 安装
 
@@ -39,6 +39,36 @@ Message Router旨在打造一个适配所有主流消息组件的消息分发中
 | name     | 唯一标识名称         |
 | type     | 类型，当前仅支持File |
 
+#### Kafka
+
+##### 格式说明
+
+| 字段名称 | 释义      |
+|------|---------|
+|bootstrap.servers      | 引导服务器   |
+|group.id      | 消费者组ID  |
+|auto.offset.reset      | 数据读取策略  |
+|enable.auto.commit      | 自动提交    |
+|acks      | 消息发送可靠性 |
+|topics          | 订阅主题列表  |
+
+##### 示例
+
+```json
+{
+    "name": "k1",
+    "type": "Kafka",
+    "config": {
+        "bootstrap.servers": "localhost:9092",
+        "group.id": "my_group",
+        "auto.offset.reset": "earliest",
+        "enable.auto.commit": "false",
+        "acks": "1",
+        "topics": ["test1"]
+    }
+}
+```
+
 #### 文件
 
 ##### 格式说明
@@ -51,9 +81,11 @@ Message Router旨在打造一个适配所有主流消息组件的消息分发中
 
 ```json
 {
-	"name": "f1",
-	"type": "File",
-    "path": "D:/temp/test/f1"
+    "name": "f1",
+    "type": "File",
+    "config": {
+      "path": "D:/temp/test/f1"
+    }
 }
 ```
 
@@ -79,22 +111,40 @@ Message Router旨在打造一个适配所有主流消息组件的消息分发中
 
 ```json
 {
-    "connect": {
-        "connection": [{
+    "connection": {
+        "connect": [{
             "name": "f1",
             "type": "File",
-            "path": "D:/temp/test/f1"
+            "config": {
+                "path": "D:/temp/test/f1"
+            }
         },{
             "name": "f2",
             "type": "File",
-            "path": "D:/temp/test/f2"
+            "config": {
+                "path": "D:/temp/test/f2"
+            }
+        },{
+            "name": "k1",
+            "type": "Kafka",
+            "config": {
+                "bootstrap.servers": "localhost:9092",
+                "group.id": "my_group",
+                "auto.offset.reset": "earliest",
+                "enable.auto.commit": "false",
+                "acks": "1",
+                "topics": ["test1"]
+            }
         }]
     },
     "route": {
         "routes": [
             {
-                "source": "f1",
-                "target": "f2"
+                "source": "k1.test1",
+                "target": "f1"
+            },{
+                "source": "f2",
+                "target": "k1.test1"
             }
         ]
     }
