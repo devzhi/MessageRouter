@@ -5,7 +5,6 @@ import com.devzhi.messagerouter.connection.connect.AbstractConnectVerticle;
 import com.devzhi.messagerouter.connection.connect.impl.FileConnectVerticle;
 import com.devzhi.messagerouter.connection.connect.impl.KafkaConnectVerticle;
 import com.devzhi.messagerouter.model.ConnectConfig;
-import lombok.Getter;
 
 /**
  * 连接类型枚举类
