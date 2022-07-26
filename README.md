@@ -24,7 +24,7 @@ Message Router旨在打造一个适配所有主流消息组件的消息路由中
 
 ## 安装
 
-目前我们尚未构建任何版本，暂不提供安装指南。
+`java -jar MessageRouter-0.1.1-fat.jar -conf your_config.json`
 
 ## 使用
 
