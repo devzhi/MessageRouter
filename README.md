@@ -156,7 +156,6 @@ Message Router旨在打造一个适配所有主流消息组件的消息路由中
 因为有了下面这些开源项目，才让我们项目的开发和使用过程更加舒适：
 
 - [eclipse-vertx/vert.x: Vert.x is a tool-kit for building reactive applications on the JVM (github.com)](https://github.com/eclipse-vertx/vert.x)
-- [google/guice: Guice (pronounced 'juice') is a lightweight dependency injection framework for Java 8 and above, brought to you by Google. (github.com)](https://github.com/google/guice)
 - [dromara/hutool: 🍬A set of tools that keep Java sweet. (github.com)](https://github.com/dromara/hutool)
 
 ## Licence
