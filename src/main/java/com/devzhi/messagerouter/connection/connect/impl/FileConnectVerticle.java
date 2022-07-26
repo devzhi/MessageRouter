@@ -7,14 +7,12 @@ import cn.hutool.core.io.watch.Watcher;
 import cn.hutool.core.io.watch.watchers.DelayWatcher;
 import cn.hutool.core.util.IdUtil;
 import com.devzhi.messagerouter.connection.connect.AbstractConnectVerticle;
-import com.devzhi.messagerouter.model.ConnectConfig;
 import io.vertx.core.buffer.Buffer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * File处理器
@@ -41,7 +39,7 @@ public class FileConnectVerticle extends AbstractConnectVerticle {
     public AbstractConnectVerticle listen() {
         // 配置监听转发
         AbstractConnectVerticle that = this;
-        CompletableFuture.runAsync(() -> {
+        vertx.executeBlocking(handler -> {
             monitor.setWatcher(new DelayWatcher(new Watcher() {
                 @Override
                 public void onCreate(WatchEvent<?> watchEvent, Path path) {
@@ -68,9 +66,13 @@ public class FileConnectVerticle extends AbstractConnectVerticle {
         });
         // 监听对应地址并执行保存操作
         getVertx().eventBus().consumer("connect." + this.getConnectConfig().getName()).handler(message -> {
-            CompletableFuture.runAsync(() -> {
+            vertx.executeBlocking(handler -> {
                 // TODO 文件加入channelAddress
-                this.sendMessage(null,(Buffer) message.body());
+                if (this.sendMessage(null,(Buffer) message.body())) {
+                    handler.complete(true);
+                }else {
+                    handler.complete(false);
+                }
             });
         });
         return this;
