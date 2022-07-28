@@ -52,13 +52,12 @@
                     "queues": [
                         "test1"
                     ],
-                    "exchange": [
-                        {
-                            "name": "amq.topic",
-                            "exchange_type": "topic",
+                    "target": {
+                        "amq.topic@test1": {
+                            "exchange": "amq.topic",
                             "routingKey": "test1"
                         }
-                    ]
+                    }
                 }
             }
         ]
@@ -66,8 +65,8 @@
     "route": {
         "routes": [
             {
-                "source": "k1.test1",
-                "target": "f1"
+                "source": "f1",
+                "target": "r1.amq.topic@test1"
             },
             {
                 "source": "f2",
