@@ -28,10 +28,9 @@
                     },
                     "consumer": {
                         "group.id": "my_group",
-                        "auto.offset.reset": "earliest",
-                        "enable.auto.commit": "false"
+                        "auto.offset.reset": "earliest"
                     }
-                }
+                 }
             }
         ]
     },
