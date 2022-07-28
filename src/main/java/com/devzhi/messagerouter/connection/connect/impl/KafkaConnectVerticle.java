@@ -30,6 +30,7 @@ public class KafkaConnectVerticle extends AbstractConnectVerticle {
         consumerConfig.put("bootstrap.servers", (String) getConnectConfig().getConfig().get("bootstrap.servers"));
         consumerConfig.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         consumerConfig.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerConfig.put("enable.auto.commit", "true");
         consumerConfig.putAll((Map<String, String>) this.getConnectConfig().getConfig().get("consumer"));
 
         // 创建生产者
