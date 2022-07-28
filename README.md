@@ -43,14 +43,25 @@ Message Router旨在打造一个适配所有主流消息组件的消息路由中
 
 ##### 格式说明
 
+##### 通用配置
+
+| 字段名称              | 释义    |
+|-------------------|-------|
+| bootstrap.servers | 服务器 |
+|topics          | 订阅主题列表  |
+
+##### 生产者配置
+
+| 字段名称 | 释义 |
+|------|---------||
+|acks | 消息发送可靠性 |
+
+##### 消费者配置
+
 | 字段名称 | 释义      |
 |------|---------|
-|bootstrap.servers      | 引导服务器   |
 |group.id      | 消费者组ID  |
 |auto.offset.reset      | 数据读取策略  |
-|enable.auto.commit      | 自动提交    |
-|acks      | 消息发送可靠性 |
-|topics          | 订阅主题列表  |
 
 ##### 示例
 
@@ -60,11 +71,16 @@ Message Router旨在打造一个适配所有主流消息组件的消息路由中
     "type": "Kafka",
     "config": {
         "bootstrap.servers": "localhost:9092",
-        "group.id": "my_group",
-        "auto.offset.reset": "earliest",
-        "enable.auto.commit": "false",
-        "acks": "1",
-        "topics": ["test1"]
+        "topics": [
+            "test1"
+        ],
+        "producer": {
+            "acks": "1"
+        },
+        "consumer": {
+            "group.id": "my_group",
+            "auto.offset.reset": "earliest"
+        }
     }
 }
 ```
@@ -84,7 +100,7 @@ Message Router旨在打造一个适配所有主流消息组件的消息路由中
     "name": "f1",
     "type": "File",
     "config": {
-      "path": "D:/temp/test/f1"
+        "path": "D:/temp/test/f1"
     }
 }
 ```
@@ -112,37 +128,47 @@ Message Router旨在打造一个适配所有主流消息组件的消息路由中
 ```json
 {
     "connection": {
-        "connect": [{
-            "name": "f1",
-            "type": "File",
-            "config": {
-                "path": "D:/temp/test/f1"
+        "connect": [
+            {
+                "name": "f1",
+                "type": "File",
+                "config": {
+                    "path": "D:/temp/test/f1"
+                }
+            },
+            {
+                "name": "f2",
+                "type": "File",
+                "config": {
+                    "path": "D:/temp/test/f2"
+                }
+            },
+            {
+                "name": "k1",
+                "type": "Kafka",
+                "config": {
+                    "bootstrap.servers": "localhost:9092",
+                    "topics": [
+                        "test1"
+                    ],
+                    "producer": {
+                        "acks": "1"
+                    },
+                    "consumer": {
+                        "group.id": "my_group",
+                        "auto.offset.reset": "earliest"
+                    }
+                }
             }
-        },{
-            "name": "f2",
-            "type": "File",
-            "config": {
-                "path": "D:/temp/test/f2"
-            }
-        },{
-            "name": "k1",
-            "type": "Kafka",
-            "config": {
-                "bootstrap.servers": "localhost:9092",
-                "group.id": "my_group",
-                "auto.offset.reset": "earliest",
-                "enable.auto.commit": "false",
-                "acks": "1",
-                "topics": ["test1"]
-            }
-        }]
+        ]
     },
     "route": {
         "routes": [
             {
                 "source": "k1.test1",
                 "target": "f1"
-            },{
+            },
+            {
                 "source": "f2",
                 "target": "k1.test1"
             }
