@@ -30,7 +30,36 @@
                         "group.id": "my_group",
                         "auto.offset.reset": "earliest"
                     }
-                 }
+                }
+            },
+            {
+                "name": "r1",
+                "type": "rabbitmq",
+                "config": {
+                    "options": {
+                        "host": "localhost",
+                        "port": 5672,
+                        "user": "guest",
+                        "password": "guest",
+                        "virtualHost": "/",
+                        "connectionTimeout": 6000,
+                        "requestedHeartbeat": 60,
+                        "handshakeTimeout": 6000,
+                        "requestedChannelMax": 5,
+                        "networkRecoveryInterval": 500,
+                        "automaticRecoveryEnabled": true
+                    },
+                    "queues": [
+                        "test1"
+                    ],
+                    "exchange": [
+                        {
+                            "name": "amq.topic",
+                            "exchange_type": "topic",
+                            "routingKey": "test1"
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -43,6 +72,9 @@
             {
                 "source": "f2",
                 "target": "k1.test1"
+            },{
+                "source": "r1.test1",
+                "target": "f2"
             }
         ]
     }

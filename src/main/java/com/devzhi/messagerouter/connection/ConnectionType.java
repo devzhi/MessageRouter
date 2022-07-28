@@ -4,6 +4,7 @@ import cn.hutool.core.util.ReflectUtil;
 import com.devzhi.messagerouter.connection.connect.AbstractConnectVerticle;
 import com.devzhi.messagerouter.connection.connect.impl.FileConnectVerticle;
 import com.devzhi.messagerouter.connection.connect.impl.KafkaConnectVerticle;
+import com.devzhi.messagerouter.connection.connect.impl.RabbitmqConnectVerticle;
 import com.devzhi.messagerouter.model.ConnectConfig;
 
 /**
@@ -18,7 +19,8 @@ public enum ConnectionType {
      * 文件连接处理器
      */
     File("File", FileConnectVerticle.class),
-    Kafka("Kafka", KafkaConnectVerticle.class);
+    Kafka("Kafka", KafkaConnectVerticle.class),
+    rabbitmq("rabbitmq", RabbitmqConnectVerticle.class);
 
     private String type;
     private Class<? extends AbstractConnectVerticle> connectVerticleClass;
