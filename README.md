@@ -24,7 +24,7 @@ Message Router旨在打造一个适配所有主流消息组件的消息路由中
 
 ## 安装
 
-`java -jar MessageRouter-0.1.1-fat.jar -conf your_config.json`
+`java -jar MessageRouter-0.2.0-fat.jar -conf your_config.json`
 
 ## 使用
 
@@ -43,20 +43,20 @@ Message Router旨在打造一个适配所有主流消息组件的消息路由中
 
 ##### 格式说明
 
-##### 通用配置
+###### 通用配置
 
 | 字段名称              | 释义    |
 |-------------------|-------|
 | bootstrap.servers | 服务器 |
 |topics          | 订阅主题列表  |
 
-##### 生产者配置
+###### 生产者配置
 
 | 字段名称 | 释义 |
 |------|---------|
 |acks | 消息发送可靠性 |
 
-##### 消费者配置
+###### 消费者配置
 
 | 字段名称 | 释义      |
 |------|---------|
@@ -80,6 +80,74 @@ Message Router旨在打造一个适配所有主流消息组件的消息路由中
         "consumer": {
             "group.id": "my_group",
             "auto.offset.reset": "earliest"
+        }
+    }
+}
+```
+
+#### RabbitMQ
+
+##### 格式说明
+
+###### 通用配置
+
+
+| 字段名称 |释义|
+| -------- | ---- |
+| host | 主机 |
+| port | 端口 |
+| user | 用户名 |
+| password | 密码 |
+| virtualHost | 虚拟主机 |
+| connectionTimeout | 连接超时时间 |
+| requestedHeartbeat | 心跳时间 |
+| handshakeTimeout | 握手超时时间 |
+| requestedChannelMax | 请求通道最大值 |
+| networkRecoveryInterval | 网络恢复间隔 |
+| automaticRecoveryEnabled | 启用自动恢复 |
+
+*提示：部分字段不设置也会存在默认值，您并不需要设置每一项，但因精力原因文档尚未完善，如果您有兴趣可以发起PR*
+
+###### 队列配置（用于监听）
+
+传入队列名称即可
+
+###### 目标配置（用于发送）
+
+| 字段名称   | 释义       |
+| ---------- | ---------- |
+| key        | 唯一标识符 |
+| exchange   | 交换机     |
+| routingKey | 路由Key    |
+
+##### 示例
+
+```json
+{
+    "name": "r1",
+    "type": "rabbitmq",
+    "config": {
+        "options": {
+            "host": "localhost",
+            "port": 5672,
+            "user": "guest",
+            "password": "guest",
+            "virtualHost": "/",
+            "connectionTimeout": 6000,
+            "requestedHeartbeat": 60,
+            "handshakeTimeout": 6000,
+            "requestedChannelMax": 5,
+            "networkRecoveryInterval": 500,
+            "automaticRecoveryEnabled": true
+        },
+        "queues": [
+            "test1"
+        ],
+        "target": {
+            "amq.topic@test1": {
+                "exchange": "amq.topic",
+                "routingKey": "test1"
+            }
         }
     }
 }
@@ -159,22 +227,54 @@ Message Router旨在打造一个适配所有主流消息组件的消息路由中
                         "auto.offset.reset": "earliest"
                     }
                 }
+            },
+            {
+                "name": "r1",
+                "type": "rabbitmq",
+                "config": {
+                    "options": {
+                        "host": "localhost",
+                        "port": 5672,
+                        "user": "guest",
+                        "password": "guest",
+                        "virtualHost": "/",
+                        "connectionTimeout": 6000,
+                        "requestedHeartbeat": 60,
+                        "handshakeTimeout": 6000,
+                        "requestedChannelMax": 5,
+                        "networkRecoveryInterval": 500,
+                        "automaticRecoveryEnabled": true
+                    },
+                    "queues": [
+                        "test1"
+                    ],
+                    "target": {
+                        "amq.topic@test1": {
+                            "exchange": "amq.topic",
+                            "routingKey": "test1"
+                        }
+                    }
+                }
             }
         ]
     },
     "route": {
         "routes": [
             {
-                "source": "k1.test1",
-                "target": "f1"
+                "source": "f1",
+                "target": "r1.amq.topic@test1"
             },
             {
                 "source": "f2",
                 "target": "k1.test1"
+            },{
+                "source": "r1.test1",
+                "target": "f2"
             }
         ]
     }
 }
+
 ```
 
 ## 致谢
